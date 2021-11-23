@@ -29,6 +29,7 @@ export const GET_PRODUCT_BY_CATEGORY = gql`
         products{
             items{
                 uid,
+                url_key,
                 name
                 image{
                     url
@@ -38,3 +39,34 @@ export const GET_PRODUCT_BY_CATEGORY = gql`
     }
   }
 `; 
+
+export const GET_SINGLE_PRODUCT = gql `
+  query getProduct($filters: ProductAttributeFilterInput) {
+    products(filter:$filters) {
+        items {
+            uid,
+            url_key
+            name
+            description {
+                html
+            }
+            price_range{
+              maximum_price{
+                final_price{
+                  currency,
+                  value
+                }
+              }
+            }
+            image {
+                url
+            }
+            sku
+            stock_status
+            media_gallery {
+              url
+            }
+        }
+    }
+  }
+`;
