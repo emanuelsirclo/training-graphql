@@ -15,20 +15,33 @@ import {
   CardContent,
   CardMedia,
   Button,
-  Typography
+  Typography,
+  Skeleton
  } from '@mui/material';
 import { useRouter } from 'next/dist/client/router';
+
 
 const Home = () => {
   const { loading, error, data } = useQuery(GET_CATEGORIES);
   const router = useRouter();
 
-  console.log(router)
-
-  // console.log(getCountries);
   if (loading){
     return (
-      <div>Loading..</div>
+      <Container fixed>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Skeleton variant="rectangular" width="100%" height="100px" />
+            </Grid>
+            <Grid item xs={4}>
+              <Skeleton variant="rectangular" width="100%" height="100px" />
+            </Grid>
+            <Grid item xs={4}>
+              <Skeleton variant="rectangular" width="100%" height="100px" />
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
     )
   }
   const getCategory = data.categoryList;
