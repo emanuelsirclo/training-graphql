@@ -1,11 +1,11 @@
-import { GET_SINGLE_PRODUCT } from '../../../graphql/queries'
-import { useQuery } from '@apollo/client'
+import { GET_SINGLE_PRODUCT } from '../../../graphql/queries';
+import { ADD_PRODUCT_TO_CART, CREATE_CART } from '../../../graphql/mutations';
+import { CartContext } from '../../../context/CartID';
+import { useQuery, useMutation } from '@apollo/client';
 import { withApollo } from '../../../lib/apollo'
 import { useRouter } from 'next/dist/client/router';
 import { styled } from '@mui/material/styles';
-import Link from 'next/link'
-
-
+import { useContext } from 'react';
 import { 
     Box,
     Grid,
@@ -15,8 +15,6 @@ import {
     Button,
     Snackbar
 } from '@mui/material';
-
-import InfoIcon from '@mui/icons-material/ShoppingCart';
 import { useState } from 'react';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -29,6 +27,8 @@ const Item = styled(Paper)(({ theme }) => ({
 const detailProduct = () => {
     const router = useRouter();
     const [getOpen, setOpen] = useState(false);
+    const [cartId, setCartId] = useContext(CartContext);
+    const [addProductToCart] = useMutation(ADD_PRODUCT_TO_CART);
 
     const { loading, error, data } = useQuery(GET_SINGLE_PRODUCT, {
         variables: {
@@ -39,9 +39,6 @@ const detailProduct = () => {
             }
         }
     });
-
-
-
     if (loading){
         return (
             <Container fixed>
@@ -61,7 +58,24 @@ const detailProduct = () => {
             </Container>
         )
     }
-    const addToCart = (params) =>{
+    const addToCart = async (params) =>{
+        // Still Error
+        // await addProductToCart({
+        //     variables : {
+        //         input: {
+        //             cart_id : cartId,
+        //             cart_items : {
+        //                 data : {
+        //                     sku: params.sku,
+        //                     quantity: 1
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
+
+        console.log(cartId.toString())
+
         let arr = [];
         let localData = JSON.parse(localStorage.getItem("product"));
         
@@ -97,8 +111,8 @@ const detailProduct = () => {
                                 <img src={getSingleProduct.image.url} style={{maxWidth: '100%', height: '500px'}}></img>
                             </Item>
                         </Grid>
-                        {imgProduct && imgProduct.map((itemImage)=>(
-                            <Grid xs={4} style={{width: '100%', padding:'0px 8px'}}>
+                        {imgProduct && imgProduct.map((itemImage,index)=>(
+                            <Grid xs={4} style={{width: '100%', padding:'0px 8px'}} key={index}>
                                 <Item>
                                     <img src={itemImage.url} style={{maxWidth: '100%', height: 'auto'}}></img>
                                 </Item>
@@ -107,7 +121,8 @@ const detailProduct = () => {
                     </Grid>
                 </Grid>
                 <Grid xs={6}>
-                    <div style={{margin: '0px 16px'}}>
+                    <Item style={{margin: '0px 16px'}}>
+                    <div>
                         <h1>{getSingleProduct.name}</h1>
                         <p>SKU : {getSingleProduct.sku}</p>
                         <span dangerouslySetInnerHTML={{__html: `${getSingleProduct.description.html}`}}></span>
@@ -129,6 +144,7 @@ const detailProduct = () => {
                             </Button>
                         </div>
                     </div>
+                    </Item>
                 </Grid>
             </Grid>
             <Snackbar

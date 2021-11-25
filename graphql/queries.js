@@ -70,3 +70,24 @@ export const GET_SINGLE_PRODUCT = gql `
     }
   }
 `;
+
+export const GET_CART = gql`
+    query getCart($cart_id: String!){
+        cart(cart_id: $cart_id){
+        errorItems
+        id
+        items {
+            prices {
+            price {
+                value
+            }
+            }
+            quantity
+            product {
+            name
+            }
+        }
+        total_quantity
+        }
+    } 
+`;

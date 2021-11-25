@@ -1,11 +1,14 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../../styles/Home.module.css'
-import { useQuery } from '@apollo/client'
+import Head from 'next/head';
+import Image from 'next/image';
+import styles from '../../styles/Home.module.css';
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
-import { withApollo } from '../../lib/apollo'
-import Link from 'next/link'
-import { useEffect, useState } from 'react';
+import { withApollo } from '../../lib/apollo';
+import { CartContext } from '../../context/CartID';
+import { GET_CART } from '../../graphql/queries'
+import Link from 'next/link';
+import { useEffect, useState, useContext } from 'react';
+
 
 import { 
   Box,
@@ -23,16 +26,23 @@ const Cart = () => {
     const [getListCart, setListCart] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [getTotal, setTotal] = useState(true);
+    const [cartId, setCartId] = useContext(CartContext);
+
+    const { loading: loadingCart, error: errorCart, data: dataCart } = useQuery(GET_CART, {
+        variables: { cart_id: cartId },
+    });
+
+    console.log(dataCart)
 
     useEffect(()=>{
         const localData = JSON.parse(localStorage.getItem("product"));
         const arr = [];
         if(localData != null){
             setListCart(localData);
-        }
-        for(let i=0;i<=localData.length-1;i++){
-            arr.push(localData[i].price)
-            setTotal(arr.reduce((a, b) => a + b, 0));
+            for(let i=0;i<=localData.length-1;i++){
+                arr.push(localData[i].price)
+                setTotal(arr.reduce((a, b) => a + b, 0));
+            }
         }
     }, []);
 
